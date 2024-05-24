@@ -1,28 +1,27 @@
 # Standard library
-import asyncio
 import time
-import typing
+from typing import Optional
 
 ######
 # MAIN
 ######
 
 
-class Bucket(object):
-    def __init__(self, rate_limit, bucket_size_in_seconds: float = 1):
+class Bucket:
+    def __init__(self, rate_limit: float, bucket_size_in_seconds: float = 1):
         # Per-second rate limit
-        self._rate_per_sec = rate_limit / 60
+        self._rate_per_sec: float = rate_limit / 60
 
         # Capacity of the bucket
-        self._capacity = rate_limit / 60 * bucket_size_in_seconds
+        self._capacity: float = rate_limit / 60 * bucket_size_in_seconds
 
         # The integration time of the bucket
-        self._bucket_size_in_seconds = bucket_size_in_seconds
+        self._bucket_size_in_seconds: float = bucket_size_in_seconds
 
         # Last time the bucket capacity was checked
-        self._last_checked = time.time()
+        self._last_checked: float = time.time()
 
-    def _get_capacity(self, current_time: typing.Optional[float] = None):
+    def get_capacity(self, current_time: Optional[float] = None) -> float:
 
         if current_time is None:
             current_time = time.time()
@@ -36,9 +35,6 @@ class Bucket(object):
 
         return new_capacity
 
-    def _set_capacity(
-        self, new_capacity: float, current_time: typing.Optional[float] = None
-    ):
-
+    def set_capacity(self, new_capacity: float, current_time: float) -> None:
         self._last_checked = current_time
         self._capacity = new_capacity

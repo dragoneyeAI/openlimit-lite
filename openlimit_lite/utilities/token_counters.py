@@ -1,4 +1,5 @@
 # Third party
+from typing import Any, Dict, Iterable, List, Union
 import tiktoken
 
 # Tokenizer
@@ -11,7 +12,9 @@ P50K_ENCODER = tiktoken.get_encoding("p50k_base")
 ######
 
 
-def num_tokens_consumed_by_chat_request(messages, max_tokens=15, n=1, **kwargs):
+def num_tokens_consumed_by_chat_request(
+    messages: Iterable[Any], max_tokens: int = 15, n: int = 1, **kwargs: Dict[str, Any]
+) -> int:
     num_tokens = n * max_tokens
     for message in messages:
         num_tokens += (
@@ -28,11 +31,16 @@ def num_tokens_consumed_by_chat_request(messages, max_tokens=15, n=1, **kwargs):
     return num_tokens
 
 
-def num_tokens_consumed_by_completion_request(prompt, max_tokens=15, n=1, **kwargs):
+def num_tokens_consumed_by_completion_request(
+    prompt: Union[str, List[str]],
+    max_tokens: int = 15,
+    n: int = 1,
+    **kwargs: Dict[str, Any]
+) -> int:
     num_tokens = n * max_tokens
     if isinstance(prompt, str):  # Single prompt
         num_tokens += len(P50K_ENCODER.encode(prompt))
-    elif isinstance(prompt, list):  # Multiple prompts
+    elif isinstance(prompt, list):  # Multiple prompts # pyright: ignore
         num_tokens *= len(prompt)
         num_tokens += sum([len(P50K_ENCODER.encode(p)) for p in prompt])
     else:
@@ -43,10 +51,12 @@ def num_tokens_consumed_by_completion_request(prompt, max_tokens=15, n=1, **kwar
     return num_tokens
 
 
-def num_tokens_consumed_by_embedding_request(input, **kwargs):
+def num_tokens_consumed_by_embedding_request(
+    input: Union[str, List[str]], **kwargs: Dict[str, Any]
+) -> int:
     if isinstance(input, str):  # Single input
         return len(P50K_ENCODER.encode(input))
-    elif isinstance(input, list):  # Multiple inputs
+    elif isinstance(input, list):  # Multiple inputs # pyright: ignore
         return sum([len(P50K_ENCODER.encode(i)) for i in input])
 
     raise TypeError(

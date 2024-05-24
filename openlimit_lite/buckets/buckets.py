@@ -3,7 +3,7 @@ import asyncio
 import time
 from typing import Optional
 
-from openlimit.buckets.bucket import Bucket
+from openlimit_lite.buckets.bucket import Bucket
 
 ######
 # MAIN
@@ -17,13 +17,13 @@ class Buckets(object):
     def _get_capacities(
         self,
         current_time: Optional[float] = None,
-    ):
+    ) -> list[float]:
 
         if current_time is None:
             current_time = time.time()
 
         new_capacities = [
-            bucket._get_capacity(current_time=current_time) for bucket in self.buckets
+            bucket.get_capacity(current_time=current_time) for bucket in self.buckets
         ]
 
         return new_capacities
@@ -32,19 +32,18 @@ class Buckets(object):
         self,
         new_capacities: list[float],
         current_time: Optional[float] = None,
-    ):
+    ) -> None:
 
         if current_time is None:
             current_time = time.time()
 
         for new_capacity, bucket in zip(new_capacities, self.buckets):
-
-            bucket._set_capacity(
+            bucket.set_capacity(
                 new_capacity,
                 current_time=current_time,
             )
 
-    def _has_capacity(self, amounts: list[float]):
+    def _has_capacity(self, amounts: list[float]) -> bool:
 
         # Create the current time
         current_time = time.time()
@@ -74,14 +73,12 @@ class Buckets(object):
 
     def wait_for_capacity_sync(
         self, amounts: list[float], sleep_interval: float = 1e-1
-    ):
-
+    ) -> None:
         while not self._has_capacity(amounts):
             time.sleep(sleep_interval)
 
     async def wait_for_capacity(
         self, amounts: list[float], sleep_interval: float = 1e-1
-    ):
-
+    ) -> None:
         while not self._has_capacity(amounts):
             await asyncio.sleep(sleep_interval)

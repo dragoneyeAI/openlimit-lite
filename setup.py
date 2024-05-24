@@ -1,17 +1,15 @@
-import sys
 from setuptools import setup
 
 setup(
-    name="openlimit",
+    name="openlimit_lite",
     description="Rate limiter for the OpenAI API",
     version="v0.3.0",
-    packages=["openlimit", "openlimit.utilities", "openlimit.buckets"],
+    packages=["openlimit_lite", "openlimit_lite.utilities", "openlimit_lite.buckets"],
     python_requires=">=3",
-    url="https://github.com/shobrook/openlimit",
-    author="shobrook",
-    author_email="shobrookj@gmail.com",
-    # classifiers=[],
-    install_requires=["aioredis", "tiktoken"],
+    url="https://github.com/dragoneyeAI/openlimit-lite",
+    author="alexliao, shobrook",
+    author_email="support@dragoneye.ai, shobrookj@gmail.com",
+    install_requires=["tiktoken"],
     keywords=[
         "openai",
         "rate-limit",
@@ -21,8 +19,6 @@ setup(
         "token",
         "leaky-bucket",
         "gcra",
-        "redis",
         "asyncio",
     ],
-    license="MIT",
 )
