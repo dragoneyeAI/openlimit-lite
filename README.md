@@ -1,21 +1,14 @@
-# openlimit
+# openlimit-lite
+
+Forked from https://github.com/shobrook/openlimit. Maintaining for our own use, stripping down to remove Redis dependencies.
 
 A simple tool for maximizing usage of the OpenAI API without hitting the rate limit.
 
 - Handles both _request_ and _token_ limits
 - Precisely (to the millisecond) enforces rate limits with one line of code
 - Handles _synchronous_ and _asynchronous_ requests
-- Plugs into Redis to track limits across multiple threads, processes, or servers
 
 Implements the [generic cell rate algorithm,](https://en.wikipedia.org/wiki/Generic_cell_rate_algorithm) a variant of the leaky bucket pattern.
-
-## Installation
-
-You can install `openlimit` with pip:
-
-```bash
-$ pip install openlimit
-```
 
 ## Usage
 
@@ -24,7 +17,7 @@ $ pip install openlimit
 First, define your rate limits for the OpenAI model you're using. For example:
 
 ```python
-from openlimit import ChatRateLimiter
+from openlimit_lite import ChatRateLimiter
 
 rate_limiter = ChatRateLimiter(request_limit=200, token_limit=40000)
 ```
@@ -76,24 +69,6 @@ async with rate_limiter.limit(**chat_params):
     response = await openai.ChatCompletion.acreate(**chat_params)
 ```
 
-### Distributed requests
-
-By default, `openlimit` uses an in-memory store to track rate limits. But if your application is distributed, you can easily plug in a Redis store to manage limits across multiple threads or processes.
-
-```python
-from openlimit import ChatRateLimiterWithRedis
-
-rate_limiter = ChatRateLimiterWithRedis(
-    request_limit=200,
-    token_limit=40000,
-    redis_url="redis://localhost:5050"
-)
-
-# Use `rate_limiter` like you would normally ...
-```
-
-All `RateLimiter` objects have `RateLimiterWithRedis` counterparts.
-
 ### Token counting
 
 Aside from rate limiting, `openlimit` also provides methods for counting tokens consumed by requests.
@@ -143,7 +118,3 @@ request_args = {
 }
 num_tokens = num_tokens_consumed_by_embedding_request(**request_args)
 ```
-
-## Contributing
-
-If you want to contribute to the library, get started with [Adrenaline.](https://useadrenaline.com/) Paste in a link to this repository to familiarize yourself.
