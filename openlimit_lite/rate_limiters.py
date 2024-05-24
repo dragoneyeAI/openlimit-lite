@@ -2,10 +2,6 @@
 from typing import Any, Callable, Dict
 
 # Local
-from openlimit_lite.utilities.context_decorators import (
-    ContextManager,
-    FunctionDecorator,
-)
 from openlimit_lite.utilities.token_counters import (
     num_tokens_consumed_by_chat_request,
     num_tokens_consumed_by_completion_request,
@@ -112,3 +108,9 @@ class EmbeddingRateLimiter(RateLimiter):
             token_counter=num_tokens_consumed_by_embedding_request,
             bucket_size_in_seconds=bucket_size_in_seconds,
         )
+
+
+from openlimit_lite.utilities.context_decorators import (
+    ContextManager,
+    FunctionDecorator,
+)

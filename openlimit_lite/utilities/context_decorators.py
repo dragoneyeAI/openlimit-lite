@@ -14,6 +14,8 @@ from typing import (
     cast,
 )
 
+from openlimit_lite.rate_limiters import RateLimiter
+
 F = TypeVar("F", bound=Union[Callable[..., Any], Callable[..., Awaitable[Any]]])
 
 
@@ -80,6 +82,3 @@ class ContextManager:
         traceback: Optional[Type[BaseException]],
     ) -> Optional[bool]:
         return False
-
-
-from openlimit_lite.rate_limiters import RateLimiter
