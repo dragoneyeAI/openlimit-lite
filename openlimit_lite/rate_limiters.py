@@ -2,8 +2,17 @@
 from typing import Any, Callable, Dict
 
 # Local
-import openlimit_lite.utilities as utils
-from openlimit_lite.buckets import Bucket, Buckets
+from openlimit_lite.utilities.context_decorators import (
+    ContextManager,
+    FunctionDecorator,
+)
+from openlimit_lite.utilities.token_counters import (
+    num_tokens_consumed_by_chat_request,
+    num_tokens_consumed_by_completion_request,
+    num_tokens_consumed_by_embedding_request,
+)
+from openlimit_lite.buckets.bucket import Bucket
+from openlimit_lite.buckets.buckets import Buckets
 
 ############
 # BASE CLASS
@@ -49,10 +58,10 @@ class RateLimiter:
 
     def limit(self, **kwargs: Dict[str, Any]):
         num_tokens = self.token_counter(**kwargs)
-        return utils.ContextManager(num_tokens, self)
+        return ContextManager(num_tokens, self)
 
     def is_limited(self):
-        return utils.FunctionDecorator(self)
+        return FunctionDecorator(self)
 
 
 ######
@@ -70,7 +79,7 @@ class ChatRateLimiter(RateLimiter):
         super().__init__(
             request_limit=request_limit,
             token_limit=token_limit,
-            token_counter=utils.num_tokens_consumed_by_chat_request,
+            token_counter=num_tokens_consumed_by_chat_request,
             bucket_size_in_seconds=bucket_size_in_seconds,
         )
 
@@ -85,7 +94,7 @@ class CompletionRateLimiter(RateLimiter):
         super().__init__(
             request_limit=request_limit,
             token_limit=token_limit,
-            token_counter=utils.num_tokens_consumed_by_completion_request,
+            token_counter=num_tokens_consumed_by_completion_request,
             bucket_size_in_seconds=bucket_size_in_seconds,
         )
 
@@ -100,6 +109,6 @@ class EmbeddingRateLimiter(RateLimiter):
         super().__init__(
             request_limit=request_limit,
             token_limit=token_limit,
-            token_counter=utils.num_tokens_consumed_by_embedding_request,
+            token_counter=num_tokens_consumed_by_embedding_request,
             bucket_size_in_seconds=bucket_size_in_seconds,
         )
